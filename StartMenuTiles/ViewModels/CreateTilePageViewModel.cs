@@ -449,9 +449,10 @@ namespace StartMenuTiles.ViewModels
             var i2 = m_filename + m_ext;
             
             // copy new source to temp folder
-            await sourceFile.CopyAsync(tempFolder, i1, NameCollisionOption.ReplaceExisting);
+            var copyTask = sourceFile.CopyAsync(tempFolder, i1, NameCollisionOption.ReplaceExisting);
             // crop image to target size
-            await Common.CropHelper.CropImageAsync(f + i1, f + i2, 1, new Rect(0, 0, ImageWidth, ImageHeight), Common.CropType.GetLargestRect);
+            var cropTask = Common.CropHelper.CropImageAsync(f + i1, f + i2, 1, new Rect(0, 0, ImageWidth, ImageHeight), Common.CropType.GetLargestRect);
+            await Task.WhenAll(copyTask, cropTask);
             ImageSource = CreateSource(f + i2);
         }
     }
